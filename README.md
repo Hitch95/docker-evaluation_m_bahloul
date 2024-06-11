@@ -1,3 +1,24 @@
+# Table des Matières
+
+1. [Qu’est-ce qu’un conteneur ?](#qu’est-ce-qu’un-conteneur)
+2. [Est-ce que Docker a inventé les conteneurs Linux ? Qu’a apporté Docker à cette technologie ?](#est-ce-que-docker-a-inventé-les-conteneurs-linux-qu’a-apporté-docker-à-cette-technologie)
+3. [Pourquoi est-ce que Docker est particulièrement pensé et adapté pour la conteneurisation de processus sans états (fichiers, base de données, etc.) ?](#pourquoi-est-ce-que-docker-est-particulièrement-pensé-et-adapté-pour-la-conteneurisation-de-processus-sans-états-fichiers-base-de-données-etc)
+4. [Quel artefact distribue-t-on et déploie-t-on dans le workflow de Docker ? Quelles propriétés désirables doit-il avoir ?](#quel-artefact-distribue-t-on-et-déploie-t-on-dans-le-workflow-de-docker-quelles-propriétés-désirables-doit-il-avoir)
+5. [Quelle est la différence entre les commandes `docker run` et `docker exec` ?](#quelle-est-la-différence-entre-les-commandes-docker-run-et-docker-exec)
+6. [Peut-on lancer des processus supplémentaires dans un même conteneur docker en cours d’exécution ?](#peut-on-lancer-des-processus-supplémentaires-dans-un-même-conteneur-docker-en-cours-d’exécution)
+7. [Pourquoi est-il fortement recommandé d’utiliser un tag précis d’une image et de ne pas utiliser le tag `latest` dans un projet Docker ?](#pourquoi-est-il-fortement-recommandé-d’utiliser-un-tag-précis-d’une-image-et-de-ne-pas-utiliser-le-tag-latest-dans-un-projet-docker)
+8. [Décrire le résultat de cette commande : `docker run -d -p 9001:80 --name my-php -v "$PWD":/var/www/html php:7.2-apache`](#décrire-le-résultat-de-cette-commande-docker-run--d--p-900180---name-my-php--v-pwdvarwwwhtml-php72-apache)
+9. [Avec quelle commande docker peut-on arrêter tous les conteneurs ?](#avec-quelle-commande-docker-peut-on-arrêter-tous-les-conteneurs)
+10. [Quelles précautions doit-on prendre pour construire une image afin de la garder de petite taille et faciliter sa reconstruction ? (2 points)](#quelles-précautions-doit-on-prendre-pour-construire-une-image-afin-de-la-garder-de-petite-taille-et-faciliter-sa-reconstruction-2-points)
+11. [Lorsqu’un conteneur s’arrête, tout ce qu’il a pu écrire sur le disque ou en mémoire est perdu. Vrai ou faux ? Pourquoi ?](#lorsqu’un-conteneur-s’arrête-tout-ce-qu’il-a-pu-écrire-sur-le-disque-ou-en-mémoire-est-perdu-vrai-ou-faux-pourquoi)
+12. [Lorsqu’une image est créée, elle ne peut plus être modifiée. Vrai ou faux ?](#lorsqu’une-image-est-créée-elle-ne-peut-plus-être-modifiée-vrai-ou-faux)
+13. [Comment peut-on publier et obtenir facilement des images ?](#comment-peut-on-publier-et-obtenir-facilement-des-images)
+14. [Comment s’appelle l’image de plus petite taille possible ? Que contient-elle ?](#comment-s’appelle-l’image-de-plus-petite-taille-possible-que-contient-elle)
+15. [Par quel moyen le client Docker communique-t-il avec le serveur *dockerd* ?](#par-quel-moyen-le-client-docker-communique-t-il-avec-le-serveur-dockerd)
+16. [Un conteneur doit lancer un processus par défaut que l’on pourra override à l’exécution.](#un-conteneur-doit-lancer-un-processus-par-défaut-que-l’on-pourra-override-à-l’exécution)
+
+---
+
 # Qu’est-ce qu’un conteneur ?
 
 Un package logiciel unique, appelé « conteneur », regroupe le code d’une application avec les fichiers de configuration, les bibliothèques et les dépendances requises pour que l’application puisse s’exécuter. Ceci permet aux développeurs et aux professionnels de l’informatique de déployer les applications de façon transparente dans tous les environnements.
@@ -52,16 +73,18 @@ Il est fortement recommandé d'utiliser un tag précis d'une image Docker plutô
 - **Stabilité des versions** : L'utilisation d'un tag précis garantit que notre application utilise une version spécifique et connue de l'image Docker. Cela évite les surprises causées par les mises à jour automatiques de l'image "latest", qui pourraient introduire des changements inattendus ou des régressions dans votre environnement de production.
 - **Reproductibilité** : En spécifiant explicitement une version d'image, nous nous assurons de la reproductibilité de notre environnement de développement, de test et de production. Cela signifie que d'autres membres de notre équipe ou de déploiement ultérieur utiliseront exactement la même version de l'image Docker, ce qui facilite le débogage et la collaboration.
 - **Contrôle de la mise à jour** : En évitant d'utiliser le tag "latest", nous avons un contrôle plus granulaire sur les mises à jour de l'image Docker. Nous pouvons décider quand et comment mettre à jour votre application en choisissant délibérément d'adopter de nouvelles versions d'image après avoir testé leur compatibilité avec votre application.
-- **Prévention des erreurs de déploiement** : L'utilisation du tag "latest" peut parfois conduire à des erreurs de déploiement si l'image "latest" a été mise à jour avec des changements non compatibles avec notre application. En utilisant des tags précis, nous évitons ce risque en vous assurant que seules les versions d'image spécifiques et validées sont déployées.
+- **Prévention des erreurs de déploiement** : L'utilisation du tag "latest" peut parfois conduire à des erreurs de déploiement si l'image "latest" a été mise à jour avec des changements non compatibles avec notre application. En utilisant des tags précis, nous évitons ce risque en nous assurant que seules les versions d'image spécifiques et validées sont déployées.
 
 # Décrire le résultat de cette commande : `docker run -d -p 9001:80 --name my-php -v "$PWD":/var/www/html php:7.2-apache`
 
-Cette commande Docker exécute un conteneur basé sur l'image Docker `php:7.2-apache`. Voici ce que chaque partie de la commande fait :
+Cette commande Docker exécute un conteneur basé sur l'image Docker `php:7.2-apache`. 
+
+Voici ce que chaque partie de la commande fait :
 - `docker run`: Cette commande est utilisée pour exécuter un conteneur à partir d'une image Docker.
 - `-d`: Cela indique à Docker de détacher le conteneur de notre terminal, ce qui signifie qu'il s'exécutera en arrière-plan.
 - `-p 9001:80`: Cela mappe le port 9001 de l'hôte (notre machine locale) au port 80 du conteneur. Ainsi, nous pourrons accéder à l'application hébergée dans le conteneur via le port 9001 de notre machine.
 - `--name my-php`: Cela attribue le nom "my-php" au conteneur.
-- `-v "$PWD":/var/www/html`: Cela monte le répertoire de travail actuel de notre machine locale (représenté par `$PWD`) dans le répertoire `/var/www/html` du conteneur. Cela permet de partager des fichiers entre votre machine locale et le conteneur, utile notamment pour le développement.
+- `-v "$PWD":/var/www/html`: Cela monte le répertoire de travail actuel de notre machine locale (représenté par `$PWD`) dans le répertoire `/var/www/html` du conteneur. Cela permet de partager des fichiers entre notre machine locale et le conteneur, utile notamment pour le développement.
 - `php:7.2-apache`: C'est l'image Docker à partir de laquelle le conteneur sera lancé. Dans ce cas, il s'agit de l'image PHP avec Apache, version 7.2.
 
 # Avec quelle commande docker peut-on arrêter tous les conteneurs ?
@@ -70,17 +93,17 @@ Avec la commande `docker stop`.
 
 # Quelles précautions doit-on prendre pour construire une image afin de la garder de petite taille et faciliter sa reconstruction ? (2 points)
 
-Pour construire une image Docker de petite taille et faciliter sa reconstruction :
-- Utilisez des images de base légères comme Alpine Linux.
-- Minimisez le nombre de couches en regroupant les commandes RUN.
-- Nettoyez les dépendances inutiles.
-- Utilisez *.dockerignore* pour exclure les fichiers inutiles.
-- Optez pour des images multi-étapes pour réduire la taille finale.
-- Évitez les commandes superflues pour limiter les fichiers et les opérations inclus dans l'image.
+Pour construire une image Docker de petite taille et faciliter sa reconstruction, il faut :
+- Utiliser des images de base légères comme Alpine Linux
+- Minimiser le nombre de couches en regroupant les commandes RUN
+- Nettoyer les dépendances inutiles
+- Utiliser `.dockerignore` pour exclure les fichiers inutiles
+- Opter pour des images multi-étapes pour réduire la taille finale
+- Éviter les commandes superflues pour limiter les fichiers et les opérations inclus dans l'image.
 
 # Lorsqu’un conteneur s’arrête, tout ce qu’il a pu écrire sur le disque ou en mémoire est perdu. Vrai ou faux ? Pourquoi ?
 
-Vrai. Par défaut, les données écrites sur le disque et en mémoire à l'intérieur d'un conteneur Docker sont perdues lorsque le conteneur s'arrête, mais nous pouvons utiliser des volumes Docker pour faire persister les données sur le disque au-delà du cycle de vie du conteneur.
+Par défaut, les données écrites sur le disque et en mémoire à l'intérieur d'un conteneur Docker sont perdues lorsque le conteneur s'arrête, mais nous pouvons utiliser des volumes Docker pour faire persister les données sur le disque au-delà du cycle de vie du conteneur.
 
 # Lorsqu’une image est créée, elle ne peut plus être modifiée. Vrai ou faux ?
 

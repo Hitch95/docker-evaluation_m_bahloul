@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS article (
 );
 
 INSERT INTO article (id, title, body) VALUES 
-(1, 'Docker Overview', 'Test Body 1'),
-(2, 'What is acontainer?', 'Test Body 2');
+(1, 'Docker Overview', 'Docker is an open platform fordeveloping, shipping, andrunning applications. Dockerenables you to separate yourapplications from yourinfrastructure so you can deliversoftware quickly'),
+(2, 'What is a container?', 'IImagine you’re developing a killer web app that has three main components - a Reactfrontend, a Python API, and a PostgreSQL database. If you wanted to work on thisproject, you’d have to install Node, Python, and PostgreSQL.');

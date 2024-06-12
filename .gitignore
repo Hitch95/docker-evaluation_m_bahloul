@@ -1,0 +1,5 @@
+# Exclude the data directory
+database/data/
+
+# Exclude the .env file
+.database/.env

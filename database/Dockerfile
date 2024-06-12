@@ -16,5 +16,10 @@ ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 # Copier le script SQL d'initialisation
 COPY init.sql /docker-entrypoint-initdb.d/
 
+# Create the db_client user and grant privileges
+RUN mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'db_client'@'%' IDENTIFIED BY 'password';"
+RUN mysql -u root -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON *.* TO 'db_client'@'%';"
+
+
 # Exposer le port MySQL
 EXPOSE 3306
